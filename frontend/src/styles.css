@@ -396,6 +396,10 @@ h2 {
   padding: 20px;
 }
 
+.leaderboard-panel {
+  margin-bottom: 20px;
+}
+
 .table-wrap {
   overflow-x: auto;
 }
@@ -404,6 +408,10 @@ table {
   width: 100%;
   border-collapse: collapse;
   min-width: 760px;
+}
+
+.leaderboard-table {
+  min-width: 420px;
 }
 
 th,

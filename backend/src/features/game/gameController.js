@@ -53,9 +53,9 @@ export async function startRound(req, res, next) {
       validateBet(bet, Number(user.points));
 
       const updatedUserResult = await client.query(
-        `UPDATE users SET points = points - $1, updated_at = NOW()
+        `UPDATE users SET points = points - $1, points_updated_at = NOW(), updated_at = NOW()
          WHERE id = $2 AND points >= $1
-         RETURNING id, email, username, role, status, points, last_login_at, created_at`,
+         RETURNING id, email, username, role, status, points, points_updated_at, last_login_at, created_at`,
         [bet, req.user.id]
       );
 
@@ -157,9 +157,9 @@ export async function cashOut(req, res, next) {
     let updatedUser = null;
     if (req.user) {
       const updatedUserResult = await client.query(
-        `UPDATE users SET points = points + $1, updated_at = NOW()
+        `UPDATE users SET points = points + $1, points_updated_at = NOW(), updated_at = NOW()
          WHERE id = $2
-         RETURNING id, email, username, role, status, points, last_login_at, created_at`,
+         RETURNING id, email, username, role, status, points, points_updated_at, last_login_at, created_at`,
         [payout, req.user.id]
       );
       updatedUser = updatedUserResult.rows[0];
@@ -230,9 +230,9 @@ export async function crashRound(req, res, next) {
       let updatedUser = null;
       if (req.user) {
         const updatedUserResult = await client.query(
-          `UPDATE users SET points = points + $1, updated_at = NOW()
+          `UPDATE users SET points = points + $1, points_updated_at = NOW(), updated_at = NOW()
            WHERE id = $2
-           RETURNING id, email, username, role, status, points, last_login_at, created_at`,
+           RETURNING id, email, username, role, status, points, points_updated_at, last_login_at, created_at`,
           [payout, req.user.id]
         );
         updatedUser = updatedUserResult.rows[0];

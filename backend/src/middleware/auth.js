@@ -14,7 +14,7 @@ export async function authenticate(req, _res, next) {
 
     const payload = jwt.verify(token, env.jwtSecret);
     const result = await query(
-      'SELECT id, email, username, role, status, points, last_login_at, created_at FROM users WHERE id = $1',
+      'SELECT id, email, username, role, status, points, points_updated_at, last_login_at, created_at FROM users WHERE id = $1',
       [payload.id]
     );
 

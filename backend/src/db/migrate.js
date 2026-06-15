@@ -5,11 +5,18 @@ import { pool } from './pool.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const migrationPath = path.resolve(__dirname, '../../migrations/001_init.sql');
+const migrationsDir = path.resolve(__dirname, '../../migrations');
 
 export async function runMigrations() {
-  const sql = await fs.readFile(migrationPath, 'utf8');
-  await pool.query(sql);
+  const files = await fs.readdir(migrationsDir);
+  const migrationFiles = files
+    .filter((file) => file.endsWith('.sql'))
+    .sort();
+
+  for (const file of migrationFiles) {
+    const sql = await fs.readFile(path.join(migrationsDir, file), 'utf8');
+    await pool.query(sql);
+  }
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

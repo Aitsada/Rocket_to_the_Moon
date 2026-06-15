@@ -55,3 +55,7 @@ export const gameApi = {
   }),
   history: () => apiRequest('/game/history')
 };
+
+export const usersApi = {
+  leaderboard: () => apiRequest('/users/leaderboard')
+};

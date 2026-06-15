@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.jsx';
-import { gameApi } from '../services/api.js';
+import { gameApi, usersApi } from '../services/api.js';
 
 export default function Dashboard() {
   const { user, loadingUser } = useAuth();
   const [rounds, setRounds] = useState([]);
+  const [leaders, setLeaders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingLeaders, setLoadingLeaders] = useState(true);
   const [error, setError] = useState('');
+  const [leaderError, setLeaderError] = useState('');
 
   useEffect(() => {
     if (!user) {
@@ -15,10 +18,30 @@ export default function Dashboard() {
       return;
     }
 
-    gameApi.history()
-      .then((data) => setRounds(data.rounds))
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+    setLoading(true);
+    setLoadingLeaders(true);
+
+    Promise.allSettled([
+      gameApi.history(),
+      usersApi.leaderboard()
+    ])
+      .then(([historyResult, leaderboardResult]) => {
+        if (historyResult.status === 'fulfilled') {
+          setRounds(historyResult.value.rounds);
+        } else {
+          setError(historyResult.reason.message);
+        }
+
+        if (leaderboardResult.status === 'fulfilled') {
+          setLeaders(leaderboardResult.value.users);
+        } else {
+          setLeaderError(leaderboardResult.reason.message);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+        setLoadingLeaders(false);
+      });
   }, [user]);
 
   if (loadingUser) {
@@ -40,6 +63,37 @@ export default function Dashboard() {
           <span>Saved balance</span>
           <strong>{user.points} pts</strong>
         </div>
+      </section>
+
+      <section className="history-panel leaderboard-panel">
+        <h2>Top 10 scores</h2>
+        {loadingLeaders && <p className="message">Loading leaderboard...</p>}
+        {leaderError && <p className="error">{leaderError}</p>}
+        {!loadingLeaders && !leaderError && leaders.length === 0 && (
+          <div className="empty-state">
+            <p>No ranked users yet.</p>
+          </div>
+        )}
+        {leaders.length > 0 && (
+          <div className="table-wrap">
+            <table className="leaderboard-table">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Last point update</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leaders.map((leader) => (
+                  <tr key={`${leader.username}-${leader.last_point_update}`}>
+                    <td>{leader.username}</td>
+                    <td>{new Date(leader.last_point_update).toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
 
       <section className="history-panel">
