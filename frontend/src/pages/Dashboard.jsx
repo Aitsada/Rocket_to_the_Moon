@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.jsx';
 import { gameApi, usersApi } from '../services/api.js';
 
@@ -11,36 +11,40 @@ export default function Dashboard() {
   const [loadingLeaders, setLoadingLeaders] = useState(true);
   const [error, setError] = useState('');
   const [leaderError, setLeaderError] = useState('');
-
   useEffect(() => {
+    console.log("user : ", user)
+    setLoadingLeaders(true);
+
+    usersApi.leaderboard()
+      .then((data) => {
+        setLeaders(data.users);
+        setLeaderError('');
+      })
+      .catch((err) => {
+        setLeaderError(err.message);
+      })
+      .finally(() => {
+        setLoadingLeaders(false);
+      });
+
     if (!user) {
+      setRounds([]);
+      setError('');
       setLoading(false);
       return;
     }
 
     setLoading(true);
-    setLoadingLeaders(true);
-
-    Promise.allSettled([
-      gameApi.history(),
-      usersApi.leaderboard()
-    ])
-      .then(([historyResult, leaderboardResult]) => {
-        if (historyResult.status === 'fulfilled') {
-          setRounds(historyResult.value.rounds);
-        } else {
-          setError(historyResult.reason.message);
-        }
-
-        if (leaderboardResult.status === 'fulfilled') {
-          setLeaders(leaderboardResult.value.users);
-        } else {
-          setLeaderError(leaderboardResult.reason.message);
-        }
+    gameApi.history()
+      .then((data) => {
+        setRounds(data.rounds);
+        setError('');
+      })
+      .catch((err) => {
+        setError(err.message);
       })
       .finally(() => {
         setLoading(false);
-        setLoadingLeaders(false);
       });
   }, [user]);
 
@@ -48,21 +52,19 @@ export default function Dashboard() {
     return <div className="page"><p className="message">Loading account...</p></div>;
   }
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
   return (
     <div className="page">
       <section className="dashboard-head">
         <div>
           <p className="eyebrow">Dashboard</p>
-          <h1>{user.username}</h1>
+          <h1>{user ? user.username : 'Leaderboard'}</h1>
         </div>
-        <div className="balance-card">
-          <span>Saved balance</span>
-          <strong>{user.points} pts</strong>
-        </div>
+        {user && (
+          <div className="balance-card">
+            <span>Saved balance</span>
+            <strong>{user.points} pts</strong>
+          </div>
+        )}
       </section>
 
       <section className="history-panel leaderboard-panel">
@@ -79,15 +81,17 @@ export default function Dashboard() {
             <table className="leaderboard-table">
               <thead>
                 <tr>
+                  <th>#</th>
                   <th>Username</th>
-                  <th>Last point update</th>
+                  <th>Points</th>
                 </tr>
               </thead>
               <tbody>
-                {leaders.map((leader) => (
-                  <tr key={`${leader.username}-${leader.last_point_update}`}>
+                {leaders.map((leader, index) => (
+                  <tr key={leader.username}>
+                    <td>{index + 1}</td>
                     <td>{leader.username}</td>
-                    <td>{new Date(leader.last_point_update).toLocaleString()}</td>
+                    <td>{leader.points} pts</td>
                   </tr>
                 ))}
               </tbody>
@@ -98,15 +102,21 @@ export default function Dashboard() {
 
       <section className="history-panel">
         <h2>Round history</h2>
-        {loading && <p className="message">Loading rounds...</p>}
+        {!user && (
+          <div className="empty-state">
+            <p>Log in to view your saved rounds.</p>
+            <Link className="button-link" to="/login">Login</Link>
+          </div>
+        )}
+        {user && loading && <p className="message">Loading rounds...</p>}
         {error && <p className="error">{error}</p>}
-        {!loading && !error && rounds.length === 0 && (
+        {user && !loading && !error && rounds.length === 0 && (
           <div className="empty-state">
             <p>No saved rounds yet.</p>
             <Link className="button-link" to="/">Play a round</Link>
           </div>
         )}
-        {rounds.length > 0 && (
+        {user && rounds.length > 0 && (
           <div className="table-wrap">
             <table>
               <thead>

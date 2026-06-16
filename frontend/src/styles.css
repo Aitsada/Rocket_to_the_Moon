@@ -59,6 +59,7 @@ button,
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  border-right: white;
 }
 
 .brand {
@@ -72,7 +73,7 @@ button,
 }
 
 .nav a {
-  color: #b9c3d9;
+  color: #334f8d;
   text-decoration: none;
   font-weight: 700;
 }

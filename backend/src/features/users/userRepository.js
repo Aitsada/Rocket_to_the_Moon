@@ -35,7 +35,7 @@ export async function touchLastLogin(userId) {
 
 export async function getLeaderboard() {
   const result = await query(
-    `SELECT username, points_updated_at AS last_point_update
+    `SELECT username, points
      FROM users
      WHERE status = 'active'
      ORDER BY points DESC, points_updated_at DESC
