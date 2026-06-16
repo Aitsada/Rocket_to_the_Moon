@@ -11,6 +11,21 @@ jobs:
   check:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: rocket_to_the_moon_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d rocket_to_the_moon_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,3 +41,8 @@ jobs:
 
       - name: Run checks
         run: npm run ci
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/rocket_to_the_moon_test
+          JWT_SECRET: ci-test-secret
+          CLIENT_ORIGIN: http://localhost:5173
+          DB_AUTO_MIGRATE: "false"

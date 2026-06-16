@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
 import { Rocket } from 'lucide-react';
+import { MAX_TRAVEL_SECONDS } from '../utils/gameMath.js';
 
 export default function RocketScene({ elapsed, status }) {
-  const progress = Math.min(elapsed / 10, 1);
+  const progress = Math.min(elapsed / MAX_TRAVEL_SECONDS, 1);
   const y = 220 - progress * 350;
 
   return (

@@ -1,4 +1,4 @@
-export const MAX_TRAVEL_SECONDS = 10;
+export const MAX_TRAVEL_SECONDS = 20;
 
 export function displayMultiplier(seconds) {
   const time = Math.max(0, Math.min(Number(seconds), MAX_TRAVEL_SECONDS));

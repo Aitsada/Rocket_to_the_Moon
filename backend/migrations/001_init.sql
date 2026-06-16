@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS game_rounds (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   bet_points INTEGER NOT NULL CHECK (bet_points > 0),
-  crash_time NUMERIC(5, 2) NOT NULL CHECK (crash_time > 0 AND crash_time <= 10),
+  crash_time NUMERIC(5, 2) NOT NULL CHECK (crash_time > 0 AND crash_time <= 20),
   stopped_at NUMERIC(5, 2),
   multiplier NUMERIC(6, 2),
   payout_points INTEGER NOT NULL DEFAULT 0 CHECK (payout_points >= 0),

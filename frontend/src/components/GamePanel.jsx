@@ -186,7 +186,7 @@ export default function GamePanel() {
         </div>
         <div className="multiplier">
           <span>{multiplier.toFixed(2)}x</span>
-          {/* <small>{elapsed.toFixed(1)}s / 10.0s</small> */}
+          <small>{elapsed.toFixed(1)}s / {MAX_TRAVEL_SECONDS.toFixed(1)}s</small>
         </div>
 
         <label className="field">

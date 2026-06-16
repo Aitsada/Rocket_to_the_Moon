@@ -1,4 +1,4 @@
-export const MAX_TRAVEL_SECONDS = 10;
+export const MAX_TRAVEL_SECONDS = 20;
 
 export function generateCrashTime() {
   const roll = Math.random();
@@ -7,8 +7,9 @@ export function generateCrashTime() {
     return MAX_TRAVEL_SECONDS;
   }
 
+  const minCrashSeconds = 0.4;
   const skewed = Math.pow(Math.random(), 1.45);
-  return Number((0.4 + skewed * 9.2).toFixed(2));
+  return Number((minCrashSeconds + skewed * (MAX_TRAVEL_SECONDS - minCrashSeconds)).toFixed(2));
 }
 
 export function multiplierForTime(seconds) {
