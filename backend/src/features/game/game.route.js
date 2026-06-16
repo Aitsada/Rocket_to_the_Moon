@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authenticate, optionalAuth } from '../../middleware/auth.js';
-import { cashOut, crashRound, history, startRound } from './gameController.js';
+import { cashOut, crashRound, history, startRound } from './game.controller.js';
 
 export const gameRoutes = Router();
 

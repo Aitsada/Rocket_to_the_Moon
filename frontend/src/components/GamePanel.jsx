@@ -185,7 +185,7 @@ export default function GamePanel() {
         </div>
 
         <label className="field">
-          Bet points
+          Fuel points
           <input
             type="number"
             min="1"

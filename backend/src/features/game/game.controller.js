@@ -1,6 +1,6 @@
 import { pool, query } from '../../db/pool.js';
 import { HttpError } from '../../utils/httpError.js';
-import { generateCrashTime, MAX_TRAVEL_SECONDS, multiplierForTime, nowElapsedSeconds } from './gameUtils.js';
+import { generateCrashTime, MAX_TRAVEL_SECONDS, multiplierForTime, nowElapsedSeconds } from './game.utils.js';
 
 function validateBet(betPoints, availablePoints) {
   const bet = Number(betPoints);
