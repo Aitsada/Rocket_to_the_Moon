@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "concurrently \"npm run dev --workspace backend\" \"npm run dev --workspace frontend\"",
+    "check": "npm run check --workspace backend && npm run build --workspace frontend",
+    "ci": "npm run check",
     "build": "npm run build --workspace frontend",
     "start": "npm run start --workspace backend",
     "install:all": "npm install --workspaces"

@@ -13,7 +13,6 @@ export const env = {
 };
 
 if (!env.databaseUrl) {
-  console.log("ENV : ", env)
   throw new Error('DATABASE_URL is required');
 }
 if (env.nodeEnv === 'production' && env.jwtSecret === 'development-only-secret') {

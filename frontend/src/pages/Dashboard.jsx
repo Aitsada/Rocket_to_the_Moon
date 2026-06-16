@@ -11,8 +11,8 @@ export default function Dashboard() {
   const [loadingLeaders, setLoadingLeaders] = useState(true);
   const [error, setError] = useState('');
   const [leaderError, setLeaderError] = useState('');
+
   useEffect(() => {
-    console.log("user : ", user)
     setLoadingLeaders(true);
 
     usersApi.leaderboard()

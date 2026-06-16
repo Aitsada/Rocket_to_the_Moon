@@ -31,7 +31,6 @@ export async function authenticate(req, _res, next) {
 }
 
 export async function optionalAuth(req, _res, next) {
-  console.log("auth.js OK")
   const header = req.headers.authorization;
   if (!header?.startsWith('Bearer ')) {
     return next();
