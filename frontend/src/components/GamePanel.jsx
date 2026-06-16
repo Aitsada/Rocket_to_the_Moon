@@ -142,6 +142,11 @@ export default function GamePanel() {
     lastCrashCheckRef.current = now;
     try {
       const data = await gameApi.crash(round.id);
+      if (data.round.result === 'active') {
+        setRound(data.round);
+        return;
+      }
+
       if (user) {
         setUser(data.user);
       } else if (data.round.result === 'won') {
@@ -181,7 +186,7 @@ export default function GamePanel() {
         </div>
         <div className="multiplier">
           <span>{multiplier.toFixed(2)}x</span>
-          <small>{elapsed.toFixed(1)}s / 10.0s</small>
+          {/* <small>{elapsed.toFixed(1)}s / 10.0s</small> */}
         </div>
 
         <label className="field">

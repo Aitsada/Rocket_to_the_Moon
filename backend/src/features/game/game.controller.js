@@ -243,7 +243,8 @@ export async function crashRound(req, res, next) {
     }
 
     if (elapsed < crashTime) {
-      throw new HttpError(409, 'Round is still flying');
+      await client.query('COMMIT');
+      return res.json({ round: publicRound(round), user: req.user });
     }
 
     const crashed = await client.query(
