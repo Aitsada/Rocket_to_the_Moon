@@ -7,5 +7,6 @@ export function displayMultiplier(seconds) {
     return 100;
   }
 
-  return Number((0.2 + Math.pow(time / MAX_TRAVEL_SECONDS, 2.2) * 8.8).toFixed(2));
+  // return Number((0.2 + Math.pow(time / MAX_TRAVEL_SECONDS, 2.2) * 8.8).toFixed(2));
+  return Number((0.2 + Math.pow(time / MAX_TRAVEL_SECONDS, 2) * 8.8).toFixed(2));
 }

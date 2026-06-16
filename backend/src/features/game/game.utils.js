@@ -2,7 +2,6 @@ export const MAX_TRAVEL_SECONDS = 20;
 
 export function generateCrashTime() {
   const roll = Math.random();
-
   if (roll < 0.08) {
     return MAX_TRAVEL_SECONDS;
   }
@@ -19,7 +18,7 @@ export function multiplierForTime(seconds) {
     return 100;
   }
 
-  const multiplier = 0.2 + Math.pow(time / MAX_TRAVEL_SECONDS, 2.2) * 8.8;
+  const multiplier = 0.2 + Math.pow(time / MAX_TRAVEL_SECONDS, 2) * 8.8;
   return Number(multiplier.toFixed(2));
 }
 
