@@ -36,6 +36,7 @@ function publicRound(round, hideCrashTime = true) {
 }
 
 export async function startRound(req, res, next) {
+  console.log("start round OK")
   const client = await pool.connect();
 
   try {
