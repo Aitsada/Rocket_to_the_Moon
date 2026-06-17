@@ -61,7 +61,7 @@ export async function startRound(req, res, next) {
     const userPoints = req.user ? Number(req.user.points) : null;
     const bet = validateBet(req.body.bet_points, userPoints);
     const crashTime = generateCrashTime();
-
+    console.log("creshTime: ", crashTime)
     if (req.user) {
       const userResult = await client.query('SELECT id, points FROM users WHERE id = $1 FOR UPDATE', [req.user.id]);
       const user = userResult.rows[0];
@@ -238,7 +238,7 @@ export async function crashRound(req, res, next) {
     const crashTime = Number(round.crash_time);
 
     if (crashTime >= MAX_TRAVEL_SECONDS && elapsed >= MAX_TRAVEL_SECONDS) {
-      const multiplier = 100;
+      const multiplier = 20;
       const payout = Math.floor(Number(round.bet_points) * multiplier);
       const finishedRound = await client.query(
         `UPDATE game_rounds
