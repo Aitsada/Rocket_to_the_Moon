@@ -398,6 +398,40 @@ h2 {
   min-height: 48px;
 }
 
+.launch-button-error {
+  animation:
+    launch-shake 0.42s ease-in-out,
+    launch-error-fade 1s ease-out;
+}
+
+@keyframes launch-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  15%,
+  45%,
+  75% {
+    transform: translateX(-7px);
+  }
+  30%,
+  60%,
+  90% {
+    transform: translateX(7px);
+  }
+}
+
+@keyframes launch-error-fade {
+  0% {
+    background: #ef5350;
+    color: white;
+  }
+  100% {
+    background: #4dd0e1;
+    color: #061016;
+  }
+}
+
 .message,
 .hint,
 .error {

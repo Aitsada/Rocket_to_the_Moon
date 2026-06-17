@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { CircleDollarSign, Play, Square } from 'lucide-react';
+import errorSound from '../assets/sounds/error.mp3';
 import { gameApi } from '../services/api.js';
 import { displayMultiplier, MAX_TRAVEL_SECONDS } from '../utils/gameMath.js';
 import { useAuth } from '../hooks/useAuth.jsx';
@@ -27,7 +28,9 @@ export default function GamePanel() {
   const [message, setMessage] = useState('Enter a bet and launch.');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [launchErrorActive, setLaunchErrorActive] = useState(false);
   const timerRef = useRef(null);
+  const launchErrorTimerRef = useRef(null);
   const checkingCrashRef = useRef(false);
   const lastCrashCheckRef = useRef(0);
 
@@ -52,6 +55,10 @@ export default function GamePanel() {
     return () => window.clearInterval(timerRef.current);
   }, [status, round, user]);
 
+  useEffect(() => {
+    return () => window.clearTimeout(launchErrorTimerRef.current);
+  }, []);
+
   function persistGuestPoints(points) {
     sessionStorage.setItem(GUEST_BALANCE_KEY, String(points));
     setGuestPoints(points);
@@ -63,9 +70,27 @@ export default function GamePanel() {
       throw new Error('Bet must be a positive whole number.');
     }
     if (betValue > balance) {
-      throw new Error('Bet cannot exceed your points.');
+      const insufficientPointsError = new Error('Bet cannot exceed your points.');
+      insufficientPointsError.code = 'INSUFFICIENT_POINTS';
+      throw insufficientPointsError;
     }
     return betValue;
+  }
+
+  function triggerLaunchErrorFeedback() {
+    window.clearTimeout(launchErrorTimerRef.current);
+    setLaunchErrorActive(false);
+
+    window.requestAnimationFrame(() => {
+      setLaunchErrorActive(true);
+      launchErrorTimerRef.current = window.setTimeout(() => {
+        setLaunchErrorActive(false);
+      }, 1000);
+    });
+
+    const audio = new Audio(errorSound);
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
   }
 
   async function start() {
@@ -87,6 +112,9 @@ export default function GamePanel() {
 
       setStatus('flying');
     } catch (err) {
+      if (err.code === 'INSUFFICIENT_POINTS') {
+        triggerLaunchErrorFeedback();
+      }
       setError(err.message);
       setMessage('Launch failed.');
     } finally {
@@ -205,7 +233,11 @@ export default function GamePanel() {
             <Square size={18} /> Stop
           </LoadingButton>
         ) : (
-          <LoadingButton className="launch-button" loading={loading} onClick={start} disabled={balance <= 0}>
+          <LoadingButton
+            className={`launch-button${launchErrorActive ? ' launch-button-error' : ''}`}
+            loading={loading}
+            onClick={start}
+          >
             <Play size={18} /> Launch
           </LoadingButton>
         )}
