@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { CircleDollarSign, Play, Square } from 'lucide-react';
 import errorSound from '../assets/sounds/error.mp3';
+import rocketBoomSound from '../assets/sounds/rocket-boom.mp3';
 import { gameApi } from '../services/api.js';
 import { displayMultiplier, MAX_TRAVEL_SECONDS } from '../utils/gameMath.js';
 import { useAuth } from '../hooks/useAuth.jsx';
@@ -34,6 +35,7 @@ export default function GamePanel() {
   const checkingCrashRef = useRef(false);
   const lastCrashCheckRef = useRef(0);
   const cashingOutRef = useRef(false);
+  const previousStatusRef = useRef(status);
 
   const balance = user ? user.points : guestPoints;
   const multiplier = displayMultiplier(elapsed);
@@ -59,6 +61,16 @@ export default function GamePanel() {
   useEffect(() => {
     return () => window.clearTimeout(launchErrorTimerRef.current);
   }, []);
+
+  useEffect(() => {
+    if (status === 'lost' && previousStatusRef.current !== 'lost') {
+      const audio = new Audio(rocketBoomSound);
+      audio.currentTime = 0;
+      audio.play().catch(() => {});
+    }
+
+    previousStatusRef.current = status;
+  }, [status]);
 
   function persistGuestPoints(points) {
     sessionStorage.setItem(GUEST_BALANCE_KEY, String(points));
