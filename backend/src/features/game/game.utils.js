@@ -14,12 +14,12 @@ export function generateCrashTime() {
 
 export function multiplierForTime(seconds) {
   const time = Math.max(0, Math.min(Number(seconds), MAX_TRAVEL_SECONDS));
-
+  console.log("time : ", time)
   if (time >= MAX_TRAVEL_SECONDS) {
     return 20;
   }
 
-  const multiplier = 0.2 + Math.pow(time / MAX_TRAVEL_SECONDS, 2) * 8.8;
+  const multiplier = 0.2 + Math.pow(time / MAX_TRAVEL_SECONDS, 2.4) * 12.8;
   return Number(multiplier.toFixed(2));
 }
 
