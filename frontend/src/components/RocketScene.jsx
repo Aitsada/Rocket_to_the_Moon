@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-import { Rocket } from 'lucide-react';
+import moonGold from '../assets/images/moon-gold.png';
+import rocket from '../assets/images/rocket.png';
 import { MAX_TRAVEL_SECONDS } from '../utils/gameMath.js';
 
 export default function RocketScene({ elapsed, status }) {
@@ -9,20 +10,20 @@ export default function RocketScene({ elapsed, status }) {
   return (
     <section className={`rocket-scene ${status}`}>
       <div className="stars" />
-      <div className="moon" />
+      <img src={moonGold} alt="" className="moonGold" />
       <motion.div
         className="rocket-wrap"
         animate={{
           y,
-          rotate: status === 'lost' ? 70 : -12,
-          scale: status === 'lost' ? 0.9 : 1
+          rotate: status === 'lost' ? 50 : 0,
+          scale: status === 'lost' ? 1 : 1
         }}
         transition={{ type: 'spring', stiffness: 70, damping: 16 }}
       >
-        <Rocket size={64} strokeWidth={1.8} />
+        <img src={rocket} alt="" className="rocket" />
         {status === 'flying' && <span className="flame" />}
       </motion.div>
-      {status === 'lost' && <div className="explosion">BOOM</div>}
+      {status === 'lost' && <div className="explosion">BOOM!</div>}
       {status === 'won' && <div className="landing">LANDED</div>}
     </section>
   );

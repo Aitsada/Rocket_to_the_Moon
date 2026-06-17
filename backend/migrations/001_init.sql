@@ -28,3 +28,4 @@ CREATE TABLE IF NOT EXISTS game_rounds (
 
 CREATE INDEX IF NOT EXISTS idx_game_rounds_user_created_at
   ON game_rounds (user_id, created_at DESC);
+  
