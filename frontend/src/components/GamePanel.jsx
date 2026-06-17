@@ -33,6 +33,7 @@ export default function GamePanel() {
   const launchErrorTimerRef = useRef(null);
   const checkingCrashRef = useRef(false);
   const lastCrashCheckRef = useRef(0);
+  const cashingOutRef = useRef(false);
 
   const balance = user ? user.points : guestPoints;
   const multiplier = displayMultiplier(elapsed);
@@ -95,6 +96,7 @@ export default function GamePanel() {
 
   async function start() {
     setError('');
+    cashingOutRef.current = false;
     try {
       const betValue = validateLocalBet();
       setLoading(true);
@@ -129,6 +131,7 @@ export default function GamePanel() {
 
     setError('');
     setLoading(true);
+    cashingOutRef.current = true;
 
     try {
       const data = await gameApi.cashout(round.id);
@@ -153,6 +156,7 @@ export default function GamePanel() {
       setError(err.message);
     } finally {
       setLoading(false);
+      cashingOutRef.current = false;
     }
   }
 
@@ -175,15 +179,26 @@ export default function GamePanel() {
         return;
       }
 
+      if (cashingOutRef.current) {
+        return;
+      }
+
+      const stoppedAt = Number(data.round.stopped_at);
+      const reachedMoon = data.round.result === 'won' && stoppedAt >= MAX_TRAVEL_SECONDS;
+
+      if (data.round.result === 'won' && !reachedMoon) {
+        return;
+      }
+
       if (user) {
         setUser(data.user);
       } else if (data.round.result === 'won') {
         persistGuestPoints(guestPoints + Number(data.round.payout_points));
       }
       setRound(data.round);
-      setElapsed(data.round.result === 'won' ? MAX_TRAVEL_SECONDS : Number(data.round.crash_time || elapsed));
+      setElapsed(reachedMoon ? MAX_TRAVEL_SECONDS : Number(data.round.crash_time || elapsed));
       setStatus(data.round.result === 'won' ? 'won' : 'lost');
-      setMessage(data.round.result === 'won'
+      setMessage(reachedMoon
         ? `Moon reached at 100.00x for ${data.round.payout_points} points.`
         : 'Rocket crashed. Bet lost.');
     } catch (err) {
