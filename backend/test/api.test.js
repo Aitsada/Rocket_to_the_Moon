@@ -3,6 +3,7 @@ import { after, before, test } from 'node:test';
 import { app } from '../src/app.js';
 import { runMigrations } from '../src/db/migrate.js';
 import { pool } from '../src/db/pool.js';
+import { MAX_TRAVEL_SECONDS } from '../src/features/game/game.utils.js';
 
 let server;
 let baseUrl;
@@ -111,7 +112,7 @@ test('authenticated user can start a round and read history', async () => {
   });
 
   assert.equal(startResult.response.status, 201);
-  assert.equal(startResult.data.max_travel_seconds, 20);
+  assert.equal(startResult.data.max_travel_seconds, MAX_TRAVEL_SECONDS);
   assert.equal(startResult.data.round.result, 'active');
   assert.equal(startResult.data.round.bet_points, 10);
   assert.equal(startResult.data.user.points, 490);

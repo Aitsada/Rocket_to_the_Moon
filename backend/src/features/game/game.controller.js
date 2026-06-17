@@ -1,5 +1,6 @@
 import { pool, query } from '../../db/pool.js';
 import { HttpError } from '../../utils/httpError.js';
+import { publicUserFields } from '../users/userRepository.js';
 import { generateCrashTime, MAX_TRAVEL_SECONDS, multiplierForTime, nowElapsedSeconds } from './game.utils.js';
 
 function validateBet(betPoints, availablePoints) {
@@ -33,6 +34,20 @@ function publicRound(round, hideCrashTime = true) {
   }
 
   return response;
+}
+
+async function getPublicUser(client, userId) {
+  if (!userId) {
+    return null;
+  }
+
+  const result = await client.query(
+    `SELECT ${publicUserFields}
+     FROM users
+     WHERE id = $1`,
+    [userId]
+  );
+  return result.rows[0] || null;
 }
 
 export async function startRound(req, res, next) {
@@ -119,7 +134,12 @@ export async function cashOut(req, res, next) {
     }
 
     if (round.result !== 'active') {
-      throw new HttpError(409, 'Round is already finished');
+      const updatedUser = await getPublicUser(client, req.user?.id);
+      await client.query('COMMIT');
+      return res.json({
+        round: publicRound(round, false),
+        user: updatedUser
+      });
     }
 
     const elapsed = Math.min(nowElapsedSeconds(round.created_at), MAX_TRAVEL_SECONDS);

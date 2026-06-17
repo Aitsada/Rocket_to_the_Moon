@@ -1,4 +1,4 @@
-export const MAX_TRAVEL_SECONDS = 20;
+export const MAX_TRAVEL_SECONDS = 10;
 
 export function generateCrashTime() {
   const roll = Math.random();
