@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import moonGold from '../assets/images/moon-gold.png';
-import rocket from '../assets/images/Rocket.png2';
+import rocket from '../assets/images/Rocket.png';
 import { MAX_TRAVEL_SECONDS } from '../utils/gameMath.js';
 
 export default function RocketScene({ elapsed, status }) {

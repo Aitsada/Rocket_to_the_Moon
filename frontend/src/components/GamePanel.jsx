@@ -151,7 +151,7 @@ export default function GamePanel() {
     }
 
     const audio = new Audio(dropcoinSound);
-    audio.play()
+    audio.play();
     setError("");
     setLoading(true);
     cashingOutRef.current = true;
@@ -272,6 +272,7 @@ export default function GamePanel() {
         </div>
 
         <label className="field">
+          <small>Reach 20s for 20.00x</small>
           Fuel points
           <input
             type="number"
