@@ -15,7 +15,7 @@ function App() {
       <header className="topbar">
         <Link className="brand" to="/">
           <Rocket size={24} />
-          <span>Rocket to the Moon</span>
+          <span>AITxBET</span>
         </Link>
         <nav className="nav">
           <NavLink to="/">Game</NavLink>
